@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passage de Consignes — Métro de Lyon</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2333;
+    --border: #30363d;
+    --border2: #21262d;
+    --blue: #1f6feb;
+    --blue-soft: #388bfd;
+    --blue-dim: #1c3a5c;
+    --orange: #e85d04;
+    --orange-dim: #4a1d00;
+    --green: #2ea043;
+    --red: #da3633;
+    --red-dim: #3d0c0b;
+    --purple: #8957e5;
+    --purple-dim: #2a1a5c;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #58a6ff;
+    --radius: 6px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--blue);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: var(--text2); font-weight: 400; font-size: 13px; margin-left: 8px; letter-spacing: 0; }
+  .header-clock { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 500; color: var(--text); background: var(--bg3); padding: 6px 14px; border-radius: var(--radius); border: 1px solid var(--border); letter-spacing: 2px; }
+
+  /* NAV */
+  .nav-tabs { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; gap: 2px; flex-wrap: wrap; }
+  .nav-tab { padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text2); border-bottom: 2px solid transparent; transition: all .2s; text-transform: uppercase; letter-spacing: .5px; background: none; border-top: none; border-left: none; border-right: none; }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-tab .cnt { font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-left: 6px; background: var(--blue-dim); color: var(--accent); }
+  .nav-tab.t-orange.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .nav-tab.t-orange .cnt { background: var(--orange-dim); color: var(--orange); }
+  .nav-tab.t-grey.active { color: var(--text2); border-bottom-color: var(--text3); }
+  .nav-tab.t-grey .cnt { background: var(--bg3); color: var(--text3); }
+  .nav-tab.t-purple.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .nav-tab.t-purple .cnt { background: var(--purple-dim); color: var(--purple); }
+
+  /* MAIN */
+  main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+  .pill { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .5px; }
+  .pill-perm { background: var(--blue-dim); color: var(--accent); border: 1px solid var(--blue); }
+  .pill-jour { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+  .pill-arch { background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all .15s; letter-spacing: .3px; }
+  .btn-blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .btn-blue:hover { background: var(--blue-soft); }
+  .btn-orange { background: var(--orange); color: #fff; border-color: var(--orange); }
+  .btn-orange:hover { filter: brightness(1.1); }
+  .btn-ghost { background: transparent; color: var(--text2); border-color: var(--border); }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+  .btn-danger { background: transparent; color: var(--red); border-color: var(--red); font-size: 12px; padding: 5px 10px; }
+  .btn-danger:hover { background: var(--red-dim); }
+  .btn-purple { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .btn-purple:hover { filter: brightness(1.1); }
+
+  /* CONSIGNE CARD */
+  .clist { display: flex; flex-direction: column; gap: 10px; }
+  .ccard { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; border-left: 3px solid var(--blue); transition: border-color .2s; animation: fadeIn .3s ease; }
+  .ccard.jour { border-left-color: var(--orange); }
+  .ccard:hover { border-color: var(--text3); }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .ctop { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .ctext { font-size: 14px; line-height: 1.6; color: var(--text); flex: 1; white-space: pre-wrap; }
+  .cmeta { display: flex; align-items: center; gap: 16px; font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; flex-wrap: wrap; }
+  .mi { display: flex; align-items: center; gap: 4px; }
+  .ml { color: var(--text3); }
+  .mv { color: var(--text2); font-weight: 500; }
+
+  /* MODAL */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.72); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+  .overlay.open { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; width: 560px; max-width: 95vw; box-shadow: var(--shadow); animation: slideUp .2s ease; max-height: 90vh; overflow-y: auto; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .mtitle { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 18px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+
+  /* FORMS */
+  .fg { margin-bottom: 14px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+  input[type=text], textarea, select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px; padding: 8px 12px; outline: none; transition: border-color .2s; }
+  input[type=text]:focus, textarea:focus, select:focus { border-color: var(--blue); }
+  textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+  select option { background: var(--bg2); }
+  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mactions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  .hint { font-size: 11px; color: var(--text3); margin-top: 5px; }
+  .hint a { color: var(--accent); text-decoration: none; }
+  .hint a:hover { text-decoration: underline; }
+
+  /* CONFIRM BOX */
+  .confirm-box { background: var(--red-dim); border: 1px solid var(--red); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; font-size: 13px; color: var(--text); line-height: 1.5; }
+
+  /* ARCHIVE */
+  .acard { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 14px 16px; border-left: 3px solid var(--text3); opacity: .82; animation: fadeIn .3s ease; }
+  .ahdr { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .atype { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 2px 6px; border-radius: 3px; }
+  .atype.perm { background: var(--blue-dim); color: var(--accent); }
+  .atype.jour { background: var(--orange-dim); color: var(--orange); }
+  .atext { font-size: 13px; color: var(--text2); margin-bottom: 10px; white-space: pre-wrap; }
+  .ametas { display: flex; flex-wrap: wrap; gap: 16px; font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+  .amg { display: flex; flex-direction: column; gap: 3px; }
+  .aml { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: .4px; }
+  .amv { color: var(--text2); }
+  .asep { width: 1px; background: var(--border); margin: 0 2px; align-self: stretch; }
+
+  /* LIENS */
+  .lgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .lcard { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+  .lcard:hover { background: var(--bg3); border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .lic { font-size: 22px; flex-shrink: 0; }
+  .linfo { flex: 1; min-width: 0; }
+  .lname { font-weight: 600; font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ldesc { font-size: 11px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ltag { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 5px; border-radius: 3px; letter-spacing: .3px; flex-shrink: 0; }
+  .lt-xlsx { background: #1a3d1a; color: #56d364; }
+  .lt-pdf  { background: #3d1a1a; color: #f78166; }
+  .lt-doc  { background: #1a2d3d; color: #79c0ff; }
+  .lt-lien { background: #2d2a1a; color: #e3b341; }
+
+  /* RÉGULATEURS */
+  .rlist { display: flex; flex-direction: column; gap: 8px; }
+  .ritem { display: flex; align-items: center; justify-content: space-between; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; animation: fadeIn .25s ease; }
+  .rileft { display: flex; align-items: center; gap: 10px; }
+  .ravatar { width: 34px; height: 34px; border-radius: 50%; background: var(--purple-dim); border: 1px solid var(--purple); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--purple); text-transform: uppercase; flex-shrink: 0; }
+  .rname { font-weight: 600; font-size: 14px; }
+  .rmat  { font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .rdelbtn { background: transparent; border: none; cursor: pointer; color: var(--text3); font-size: 15px; padding: 4px 7px; border-radius: 4px; transition: .15s; }
+  .rdelbtn:hover { color: var(--red); background: var(--red-dim); }
+
+  /* INFO BOX */
+  .infobox { background: var(--blue-dim); border: 1px solid var(--blue); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+  .infobox strong { color: var(--accent); }
+
+  /* FILTER BAR */
+  .fbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .fbar input  { max-width: 260px; padding: 6px 10px; }
+  .fbar select { max-width: 190px; padding: 6px 10px; }
+
+  /* DUAL COLUMN */
+  .dual-col { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0; align-items: start; }
+  .dual-section { padding: 0 20px; }
+  .dual-section:first-child { padding-left: 0; }
+  .dual-section:last-child  { padding-right: 0; }
+  .dual-divider { background: var(--border); min-height: 100px; align-self: stretch; }
+  @media (max-width: 900px) {
+    .dual-col { grid-template-columns: 1fr; }
+    .dual-divider { display: none; }
+    .dual-section { padding: 0; margin-bottom: 28px; }
+  }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
+  .empty .ei { font-size: 32px; margin-bottom: 10px; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 16px; font-size: 13px; color: var(--text); z-index: 999; opacity: 0; transform: translateY(10px); transition: all .3s; display: flex; align-items: center; gap: 8px; max-width: 320px; box-shadow: var(--shadow); }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.ok  { border-color: var(--green); }
+  #toast.err { border-color: var(--red); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🚇 TCL Régulation <span>Passage de Consignes</span></div>
+  <div class="header-clock" id="clock">--:--:--</div>
+</header>
+
+<nav class="nav-tabs">
+  <button class="nav-tab active"   onclick="goPage('consignes')">📋 Consignes <span class="cnt" id="cp">0</span></button>
+  <button class="nav-tab"          onclick="goPage('liens')">🔗 Liens &amp; Documents</button>
+  <button class="nav-tab t-grey"   onclick="goPage('archive')">🗄️ Archives <span class="cnt" id="ca">0</span></button>
+  <button class="nav-tab t-purple" onclick="goPage('regs')">👥 Régulateurs <span class="cnt" id="cr">0</span></button>
+</nav>
+
+<main>
+
+  <!-- CONSIGNES (permanentes + jour sur la même page) -->
+  <div class="page active" id="page-consignes">
+    <div class="dual-col">
+
+      <!-- Colonne gauche : Permanentes -->
+      <div class="dual-section">
+        <div class="section-header">
+          <div class="section-title">📌 Consignes Permanentes <span class="pill pill-perm">En vigueur</span></div>
+          <button class="btn btn-blue" onclick="openAdd('perm')">＋ Ajouter</button>
+        </div>
+        <div class="clist" id="list-perm"></div>
+      </div>
+
+      <!-- Séparateur vertical -->
+      <div class="dual-divider"></div>
+
+      <!-- Colonne droite : Du Jour -->
+      <div class="dual-section">
+        <div class="section-header">
+          <div class="section-title">📋 Consignes du Jour <span class="pill pill-jour">Quotidien</span></div>
+          <button class="btn btn-orange" onclick="openAdd('jour')">＋ Ajouter</button>
+        </div>
+        <div class="clist" id="list-jour"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LIENS -->
+  <div class="page" id="page-liens">
+    <div class="section-header">
+      <div class="section-title">🔗 Liens &amp; Documents</div>
+      <button class="btn btn-blue" onclick="openModalId('m-addlink')">＋ Ajouter un lien</button>
+    </div>
+    <div class="lgrid" id="links-grid"></div>
+  </div>
+
+  <!-- ARCHIVES -->
+  <div class="page" id="page-archive">
+    <div class="section-header">
+      <div class="section-title">🗄️ Archives <span class="pill pill-arch">Historique</span></div>
+    </div>
+    <div class="fbar">
+      <input type="text" id="a-search" placeholder="Rechercher…" oninput="renderArchive()">
+      <select id="a-filter" onchange="renderArchive()">
+        <option value="">Tout type</option>
+        <option value="perm">Permanentes</option>
+        <option value="jour">Du Jour</option>
+      </select>
+    </div>
+    <div class="clist" id="list-archive"></div>
+  </div>
+
+  <!-- RÉGULATEURS -->
+  <div class="page" id="page-regs">
+    <div class="section-header">
+      <div class="section-title">👥 Régulateurs</div>
+      <button class="btn btn-purple" onclick="openAddReg()">＋ Ajouter</button>
+    </div>
+    <div class="infobox">
+      💡 Les régulateurs enregistrés ici apparaissent dans les <strong>listes déroulantes</strong> lors de la rédaction ou suppression d'une consigne. Plus besoin de saisir son nom manuellement.
+    </div>
+    <div class="rlist" id="reg-list"></div>
+  </div>
+
+</main>
+
+<!-- ── MODAL : AJOUT CONSIGNE ── -->
+<div class="overlay" id="m-add">
+  <div class="modal">
+    <div class="mtitle" id="m-add-title">➕ Nouvelle consigne</div>
+    <div class="fg">
+      <label>Rédacteur *</label>
+      <select id="add-author"><option value="">— Choisir un régulateur —</option></select>
+      <p class="hint">Absent de la liste ? <a href="#" onclick="event.preventDefault();goPage('regs');closeAll()">→ Gérer les régulateurs</a></p>
+    </div>
+    <div class="fg">
+      <label>Consigne *</label>
+      <textarea id="add-text" placeholder="Rédigez la consigne…"></textarea>
+    </div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeAll()">Annuler</button>
+      <button class="btn btn-blue" id="btn-save-add" onclick="saveConsigne()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL : SUPPRESSION CONSIGNE ── -->
+<div class="overlay" id="m-del">
+  <div class="modal">
+    <div class="mtitle">🗑️ Supprimer la consigne</div>
+    <div class="confirm-box" id="del-preview"></div>
+    <div class="fg">
+      <label>Régulateur qui supprime *</label>
+      <select id="del-author"><option value="">— Sélectionner —</option></select>
+      <p class="hint">Absent de la liste ? <a href="#" onclick="event.preventDefault();goPage('regs');closeAll()">→ Gérer les régulateurs</a></p>
+    </div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeAll()">Annuler</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Confirmer la suppression</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL : AJOUT LIEN ── -->
+<div class="overlay" id="m-addlink">
+  <div class="modal">
+    <div class="mtitle">🔗 Nouveau lien / Document</div>
+    <div class="fg">
+      <label>Nom *</label>
+      <input type="text" id="l-name" placeholder="Ex : Tableau de bord incidents">
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label>Type</label>
+        <select id="l-type">
+          <option value="lien">🌐 Lien Web</option>
+          <option value="xlsx">📊 Excel (.xlsx)</option>
+          <option value="pdf">📄 PDF</option>
+          <option value="doc">📝 Word (.doc)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>URL / Chemin *</label>
+        <input type="text" id="l-url" placeholder="https:// ou \\serveur\fichier">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Description (optionnel)</label>
+      <input type="text" id="l-desc" placeholder="Brève description">
+    </div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeAll()">Annuler</button>
+      <button class="btn btn-blue" onclick="saveLink()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL : AJOUT RÉGULATEUR ── -->
+<div class="overlay" id="m-addreg">
+  <div class="modal">
+    <div class="mtitle">👤 Nouveau régulateur</div>
+    <div class="fg">
+      <label>Nom complet *</label>
+      <input type="text" id="r-name" placeholder="Ex : Martin Dupont">
+    </div>
+    <div class="fg">
+      <label>Matricule (optionnel)</label>
+      <input type="text" id="r-mat" placeholder="Ex : REG042">
+    </div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeAll()">Annuler</button>
+      <button class="btn btn-purple" onclick="saveReg()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ──
+let S = { perm:[], jour:[], archive:[], links:[], regs:[] };
+let delTarget = null;
+let addTarget = null;
+
+// ── PERSISTENCE ──
+const KEY = 'tcl_consignes_v3';
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+function load() {
+  try {
+    const d = localStorage.getItem(KEY);
+    if (d) S = { perm:[], jour:[], archive:[], links:[], regs:[], ...JSON.parse(d) };
+  } catch(e){}
+}
+
+// ── CLOCK ──
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' +
+    String(n.getMinutes()).padStart(2,'0') + ':' +
+    String(n.getSeconds()).padStart(2,'0');
+}
+setInterval(tick, 1000); tick();
+
+// ── UTILS ──
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function fmt(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('fr-FR') + ' ' + String(d.getHours()).padStart(2,'0') + 'h' + String(d.getMinutes()).padStart(2,'0');
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.innerHTML = (type==='ok' ? '✅' : '❌') + ' ' + msg;
+  t.className = 'show ' + type;
+  clearTimeout(t._to);
+  t._to = setTimeout(() => { t.className = ''; }, 3400);
+}
+
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const idx = { consignes:0, liens:1, archive:2, regs:3 }[name] ?? 0;
+  document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+  if (name === 'archive') renderArchive();
+}
+
+function closeAll() {
+  document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open'));
+}
+function openModalId(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+// ── RÉGULATEURS — rendu ──
+function regOptions(selId, placeholder) {
+  const sorted = [...S.regs].sort((a,b) => a.name.localeCompare(b.name, 'fr'));
+  document.getElementById(selId).innerHTML =
+    `<option value="">${placeholder}</option>` +
+    sorted.map(r => `<option value="${esc(r.name)}">${esc(r.name)}${r.mat ? ' — ' + esc(r.mat) : ''}</option>`).join('');
+}
+
+function renderRegs() {
+  const el = document.getElementById('reg-list');
+  if (!S.regs.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">👥</div>Aucun régulateur.<br>Ajoutez-en un pour alimenter les listes déroulantes.</div>`;
+    return;
+  }
+  const sorted = [...S.regs].sort((a,b) => a.name.localeCompare(b.name, 'fr'));
+  el.innerHTML = sorted.map(r => {
+    const initials = r.name.split(' ').map(w => w[0]||'').slice(0,2).join('').toUpperCase();
+    return `<div class="ritem">
+      <div class="rileft">
+        <div class="ravatar">${initials}</div>
+        <div>
+          <div class="rname">${esc(r.name)}</div>
+          ${r.mat ? `<div class="rmat">${esc(r.mat)}</div>` : ''}
+        </div>
+      </div>
+      <button class="rdelbtn" onclick="delReg('${r.id}')" title="Supprimer">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function openAddReg() {
+  document.getElementById('r-name').value = '';
+  document.getElementById('r-mat').value = '';
+  openModalId('m-addreg');
+  setTimeout(() => document.getElementById('r-name').focus(), 60);
+}
+
+function saveReg() {
+  const name = document.getElementById('r-name').value.trim();
+  const mat  = document.getElementById('r-mat').value.trim();
+  if (!name) { toast('Le nom est obligatoire.', 'err'); return; }
+  if (S.regs.find(r => r.name.toLowerCase() === name.toLowerCase())) {
+    toast('Ce régulateur existe déjà.', 'err'); return;
+  }
+  S.regs.push({ id: uid(), name, mat });
+  save(); closeAll(); renderRegs(); updateCounts();
+  toast('Régulateur ajouté.');
+}
+
+function delReg(id) {
+  if (!confirm('Supprimer ce régulateur de la liste ?')) return;
+  S.regs = S.regs.filter(r => r.id !== id);
+  save(); renderRegs(); updateCounts();
+  toast('Régulateur supprimé.');
+}
+
+// ── CONSIGNES — AJOUT ──
+function openAdd(type) {
+  addTarget = type;
+  regOptions('add-author', '— Choisir un régulateur —');
+  document.getElementById('add-text').value = '';
+  const title = document.getElementById('m-add-title');
+  const btn   = document.getElementById('btn-save-add');
+  if (type === 'perm') {
+    title.innerHTML = '📌 Nouvelle consigne permanente';
+    btn.className = 'btn btn-blue';
+  } else {
+    title.innerHTML = '📋 Nouvelle consigne du jour';
+    btn.className = 'btn btn-orange';
+  }
+  openModalId('m-add');
+  setTimeout(() => document.getElementById('add-author').focus(), 60);
+}
+
+function saveConsigne() {
+  const author = document.getElementById('add-author').value;
+  const text   = document.getElementById('add-text').value.trim();
+  if (!author) { toast('Veuillez sélectionner un régulateur.', 'err'); return; }
+  if (!text)   { toast('La consigne ne peut pas être vide.', 'err'); return; }
+  S[addTarget].push({ id: uid(), author, text, createdAt: new Date().toISOString() });
+  save(); closeAll(); renderList(addTarget); updateCounts();
+  toast('Consigne enregistrée.');
+}
+
+// ── CONSIGNES — SUPPRESSION ──
+function openDel(id, type) {
+  const c = S[type].find(x => x.id === id);
+  if (!c) return;
+  delTarget = { id, type };
+  document.getElementById('del-preview').innerHTML =
+    `<strong>Consigne :</strong><br>${esc(c.text).substring(0,200)}${c.text.length > 200 ? '…' : ''}`;
+  regOptions('del-author', '— Sélectionner votre nom —');
+  openModalId('m-del');
+  setTimeout(() => document.getElementById('del-author').focus(), 60);
+}
+
+function confirmDelete() {
+  const by = document.getElementById('del-author').value;
+  if (!by) { toast('Veuillez sélectionner votre nom.', 'err'); return; }
+  const { id, type } = delTarget;
+  const idx = S[type].findIndex(x => x.id === id);
+  if (idx === -1) { closeAll(); return; }
+  const c = S[type].splice(idx, 1)[0];
+  c.origType  = type;
+  c.deletedBy = by;
+  c.deletedAt = new Date().toISOString();
+  S.archive.push(c);
+  save(); closeAll(); renderList(type); updateCounts();
+  toast('Consigne archivée.');
+}
+
+// ── RENDER ──
+function renderAll() {
+  renderList('perm');
+  renderList('jour');
+  renderLinks();
+  renderArchive();
+  renderRegs();
+  updateCounts();
+}
+
+function renderList(type) {
+  const el = document.getElementById('list-' + type);
+  if (!S[type].length) {
+    el.innerHTML = `<div class="empty"><div class="ei">📋</div>Aucune consigne.</div>`;
+    return;
+  }
+  el.innerHTML = S[type].map(c => `
+  <div class="ccard ${type}">
+    <div class="ctop">
+      <div class="ctext">${esc(c.text)}</div>
+      <div><button class="btn btn-danger" onclick="openDel('${c.id}','${type}')">🗑️ Supprimer</button></div>
+    </div>
+    <div class="cmeta">
+      <span class="mi"><span class="ml">✍️ Rédigée par</span><span class="mv">${esc(c.author)}</span></span>
+      <span class="mi"><span class="ml">📅</span><span class="mv">${fmt(c.createdAt)}</span></span>
+    </div>
+  </div>`).join('');
+}
+
+function renderArchive() {
+  const el     = document.getElementById('list-archive');
+  const search = (document.getElementById('a-search')?.value || '').toLowerCase();
+  const filter = document.getElementById('a-filter')?.value || '';
+  let items = [...S.archive].reverse();
+  if (filter) items = items.filter(c => c.origType === filter);
+  if (search) items = items.filter(c =>
+    c.text.toLowerCase().includes(search) ||
+    c.author.toLowerCase().includes(search) ||
+    (c.deletedBy||'').toLowerCase().includes(search));
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">🗄️</div>Aucune consigne archivée.</div>`;
+    return;
+  }
+  el.innerHTML = items.map(c => `
+  <div class="acard">
+    <div class="ahdr"><span class="atype ${c.origType}">${c.origType === 'perm' ? 'Permanente' : 'Du Jour'}</span></div>
+    <div class="atext">${esc(c.text)}</div>
+    <div class="ametas">
+      <div class="amg"><span class="aml">✍️ Rédigée par</span><span class="amv">${esc(c.author)}</span></div>
+      <div class="amg"><span class="aml">📅 Créée le</span><span class="amv">${fmt(c.createdAt)}</span></div>
+      <div class="asep"></div>
+      <div class="amg"><span class="aml">🗑️ Supprimée par</span><span class="amv">${esc(c.deletedBy)}</span></div>
+      <div class="amg"><span class="aml">📅 Supprimée le</span><span class="amv">${fmt(c.deletedAt)}</span></div>
+    </div>
+  </div>`).join('');
+}
+
+function updateCounts() {
+  document.getElementById('cp').textContent = S.perm.length + S.jour.length;
+  document.getElementById('ca').textContent = S.archive.length;
+  document.getElementById('cr').textContent = S.regs.length;
+}
+
+// ── LIENS ──
+const TE = { xlsx:'📊', pdf:'📄', doc:'📝', lien:'🌐' };
+const TT = { xlsx:'lt-xlsx', pdf:'lt-pdf', doc:'lt-doc', lien:'lt-lien' };
+const TL = { xlsx:'XLSX', pdf:'PDF', doc:'WORD', lien:'LIEN' };
+
+function saveLink() {
+  const name = document.getElementById('l-name').value.trim();
+  const url  = document.getElementById('l-url').value.trim();
+  const desc = document.getElementById('l-desc').value.trim();
+  const type = document.getElementById('l-type').value;
+  if (!name) { toast('Nom requis.', 'err'); return; }
+  if (!url)  { toast('URL / chemin requis.', 'err'); return; }
+  S.links.push({ id: uid(), name, url, desc, type });
+  save(); closeAll(); renderLinks(); toast('Lien enregistré.');
+}
+
+function delLink(id) {
+  S.links = S.links.filter(l => l.id !== id);
+  save(); renderLinks(); toast('Lien supprimé.');
+}
+
+function renderLinks() {
+  const el = document.getElementById('links-grid');
+  if (!S.links.length) {
+    el.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">🔗</div>Aucun lien enregistré.</div>`;
+    return;
+  }
+  el.innerHTML = S.links.map(l => `
+  <div style="position:relative">
+    <a class="lcard" href="${esc(l.url)}" target="_blank" rel="noopener">
+      <div class="lic">${TE[l.type]||'📎'}</div>
+      <div class="linfo">
+        <div class="lname">${esc(l.name)}</div>
+        <div class="ldesc">${esc(l.desc||l.url)}</div>
+      </div>
+      <span class="ltag ${TT[l.type]||'lt-lien'}">${TL[l.type]||'LIEN'}</span>
+    </a>
+    <button onclick="delLink('${l.id}')"
+      style="position:absolute;top:5px;right:5px;background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 5px;border-radius:3px;transition:.15s"
+      onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'"
+      title="Supprimer">✕</button>
+  </div>`).join('');
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAll();
+});
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) closeAll(); });
+});
+
+// Ouvrir modal ajout lien avec reset
+document.querySelector('[onclick="openModalId(\'m-addlink\')"]')?.addEventListener('click', () => {
+  document.getElementById('l-name').value = '';
+  document.getElementById('l-url').value  = '';
+  document.getElementById('l-desc').value = '';
+  document.getElementById('l-type').value = 'lien';
+  setTimeout(() => document.getElementById('l-name').focus(), 60);
+});
+
+// ── INIT ──
+load();
+renderAll();
+</script>
+</body>
+</html>
